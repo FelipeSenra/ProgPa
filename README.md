@@ -1,2 +1,2 @@
 # ProgPa
-Repositorio de Codigos da Discipliana Programação Paralela do Impa
+Repositorio de Codigos da Disciplina Programação Paralela do Impa

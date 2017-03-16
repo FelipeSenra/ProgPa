@@ -16,7 +16,7 @@ static void hconv(float *in, int w, int h, int p, float *ker, int n, float *out)
 		}
 // exterior
 		for(k=0;k<n;k++){
-		out[j] += in[j-k+1]*ker[k]; 		  // caso 1:
+		out[j] += in[j-k+1]*ker[k-1]; 		  // caso 1:
 		out[j+w*(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:
 		out[w*j] += in[w*j-k+1]*ker[k]; 		  // caso 1:
 		out[w*j+(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:

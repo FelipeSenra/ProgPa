@@ -22,7 +22,7 @@ static void hconv(float *in, int w, int h, int p, float *ker, int n, float *out)
 		temp4 = in[w*j-k+1];
 		temp5 = in[j+w*(h-1)-k+1];
 		for(k=0;k<n;k++){
-			out[j-1+k] += temp2*ker[k]; 		  // caso 1:
+			out[j-1+k] += temp2*ker[k]; 		  // caso 1: sdasd
 			out[j+w*(h-1)] += temp3*ker[k]; // caso 2:
 			out[w*j] += temp4*ker[k]; 		  // caso 1:
 			out[w*j+(h-1)] += temp5*ker[k]; // caso 2:

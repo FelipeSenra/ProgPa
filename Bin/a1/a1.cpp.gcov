@@ -1,0 +1,188 @@
+        -:    0:Source:a1.cpp
+        -:    0:Graph:a1.gcno
+        -:    0:Data:a1.gcda
+        -:    0:Runs:3
+        -:    0:Programs:1
+        -:    1:#include <vector>
+        -:    2:#include <chrono>
+        -:    3:#include <iostream>
+        -:    4:#include <complex>
+        -:    5:#include <cmath>
+        -:    6:
+        -:    7://static void hconv_split(const fvec &input,int iwidth,int iheight, int ipitch, const fvec &kernel, int length, fvec *output,int *owidth, int *oheight, int *opitch) {
+        -:    8://    output->resize(iheight*ipitch);
+        -:    9://    *owidth = iwidth; *oheight = iheight; *opitch = ipitch;
+        -:   10://    for (int i = 0; i < iheight; i++) {
+        -:   11://        for (int j = 0; j < length-1; j++) {
+        -:   12://            float sum = kernel[0]*input[i*ipitch+j];
+        -:   13://            for (int k = 1; k < length; k++) {
+        -:   14://                if (j-k >= 0)
+        -:   15://                    sum += kernel[k]*input[i*ipitch+j-k];
+        -:   16://                if (j+k < iwidth)
+        -:   17://                    sum += kernel[k]*input[i*ipitch+j+k];
+        -:   18://            }
+        -:   19://            (*output)[i*ipitch+j] = sum;
+        -:   20://        }
+        -:   21://        for (int j = length-1; j < iwidth-length+1; j++) {
+        -:   22://            float sum = kernel[0]*input[i*ipitch+j];
+        -:   23://            for (int k = 1; k < length; k++) {
+        -:   24://                sum += kernel[k]*(input[i*ipitch+j-k] + input[i*ipitch+j+k]);
+        -:   25://            }
+        -:   26://            (*output)[i*ipitch+j] = sum;
+        -:   27://        }
+        -:   28://        for (int j = iwidth-length+1; j < iwidth; j++) {
+        -:   29://            float sum = kernel[0]*input[i*ipitch+j];
+        -:   30://            for (int k = 1; k < length; k++) {
+        -:   31://                if (j-k >= 0)
+        -:   32://                    sum += kernel[k]*input[i*ipitch+j-k];
+        -:   33://                if (j+k < iwidth)
+        -:   34://                    sum += kernel[k]*input[i*ipitch+j+k];
+        -:   35://            }
+        -:   36://            (*output)[i*ipitch+j] = sum;
+        -:   37://        }
+        -:   38://    }
+        -:   39://}
+        -:   40:
+      300:   41:static void hconv(float *in, int w, int h, int p, float *ker, int n, float *out) {
+        -:   42://	hconv_split(const fvec &input,int iwidth,int iheight, int ipitch, const fvec &kernel, int length, fvec *output,int *owidth, int *oheight, int *opitch
+        -:   43:	int i,j,k;
+        -:   44:// interior
+   306900:   45:	for(j=1;j<h-1;j++){
+626997000:   46:		for(i =1 ;i<w-1;i++)
+        -:   47:			#pragma unroll
+2193416400:   48:			for(k=0;k<n;k++){
+        -:   49:// supos que 0 é o indice -1 do filtro
+940035600:   50:				out[i+w*j] += in[i+w*j-k+1]*ker[k];
+        -:   51:		}
+        -:   52:// exterior
+  2146200:   53:		for(k=0;k<n;k++){
+   919800:   54:		out[j] += in[j-k+1]*ker[k-1]; 		  // caso 1:
+   919800:   55:		out[j+w*(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:
+   919800:   56:		out[w*j] += in[w*j-k+1]*ker[k]; 		  // caso 1:
+   919800:   57:		out[w*j+(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:
+        -:   58:		}
+        -:   59:	}
+        -:   60:
+      300:   61:}
+        -:   62:
+      300:   63:static void vconv(float *in, int w, int h, int p, float *ker, int n, float *out) {
+        -:   64:	int i,j,k;
+        -:   65:// interior
+   306900:   66:	for(j=1;j<h-1;j++){
+626997000:   67:		for(i =1 ;i<w-1;i++)
+        -:   68:			#pragma unroll 
+2193416400:   69:			for(k=0;k<n;k++){
+940035600:   70:				out[i+w*j] += in[i+w*(j-k+1)]*ker[k];
+        -:   71:		}
+        -:   72:// exterior	
+        -:   73:		#pragma unroll 
+  1533000:   74:		for(k=0;k<n-1;k++){
+   613200:   75:			out[j] += in[j-w*(k-1)]*ker[k]; 		  // caso 1:
+   613200:   76:			out[j+w*(h-1)] += in[j+w*(h-1-k)]*ker[k]; // caso 2:
+   613200:   77:			out[w*j] += in[j-w*(k-1)]*ker[k]; 		  // caso 1:
+   613200:   78:			out[w*j+(h-1)] += in[j+w*(h-1-k)]*ker[k]; // caso 2:}
+        -:   79:		}
+        -:   80:	}
+      300:   81:}
+        -:   82:
+        -:   83:static void hrec(float *in, int w, int h, int p, float *k, int n, float *out) {
+        -:   84:    (void) in;
+        -:   85:    (void) w;
+        -:   86:    (void) h;
+        -:   87:    (void) p;
+        -:   88:    (void) k;
+        -:   89:    (void) n;
+        -:   90:    (void) out;
+        -:   91:}
+        -:   92:
+        -:   93:static void vrec(float *in, int w, int h, int p, float *k, int n, float *out) {
+        -:   94:    (void) in;
+        -:   95:    (void) w;
+        -:   96:    (void) h;
+        -:   97:    (void) p;
+        -:   98:    (void) k;
+        -:   99:    (void) n;
+        -:  100:    (void) out;
+        -:  101:}
+        -:  102:
+        -:  103:static constexpr std::complex<double> d1(1.41650, 1.00829);
+        -:  104:static constexpr double d3(1.86543);
+        -:  105:
+        -:  106:static double qs(double s) {
+        -:  107:    return .00399341 + .4715161*s;
+        -:  108:}
+        -:  109:
+        -:  110:static std::complex<double> ds(std::complex<double> d, double s) {
+        -:  111:    double q = qs(s);
+        -:  112:    return std::polar(std::pow(std::abs(d),1.0/q), std::arg(d)/q);
+        -:  113:}
+        -:  114:
+        -:  115:static double ds(double d, double s) {
+        -:  116:    return std::pow(d, 1.0/qs(s));
+        -:  117:}
+        -:  118:
+        -:  119:static void weights1(double s, float *b0, float *a1) {
+        -:  120:    double d = ds(d3, s);
+        -:  121:    *b0 = static_cast<float>(-(1.0-d)/d);
+        -:  122:    *a1 = static_cast<float>(-1.0/d);
+        -:  123:}
+        -:  124:
+        -:  125:static void weights2(double s, float *b0, float *a1, float *a2) { 
+        -:  126:    std::complex<double> d = ds(d1, s);
+        -:  127:    double n2 = abs(d);
+        -:  128:    n2 *= n2;
+        -:  129:    double re = real(d);
+        -:  130:    *b0 = static_cast<float>((1-2*re+n2)/n2);
+        -:  131:    *a1 = static_cast<float>(-2*re/n2);
+        -:  132:    *a2 = static_cast<float>(1/n2);
+        -:  133:}
+        -:  134:
+        -:  135:static void recgaussian(float s, float *b, float *a1, float *a2, float *a3) {
+        -:  136:    float b10, a11;
+        -:  137:    weights1(s, &b10, &a11);
+        -:  138:    float b20, a21, a22;
+        -:  139:    weights2(s, &b20, &a21, &a22);
+        -:  140:    *b = b20*b10;
+        -:  141:    *a1 = a11+a21;
+        -:  142:    *a2 = a21*a11 + a22;
+        -:  143:    *a3 = a22*a11;
+        -:  144:}
+        -:  145:
+        3:  146:int main(void) {
+        3:  147:    int reps = 100;
+        -:  148:    // somehow define n, h, w, and p
+        3:  149:    int n = 3, h = 1024, w = 1024, p = 1024;
+        -:  150:    // allocate and somehow fill it
+        6:  151:    std::vector<float> kernel(n, 0.f);
+        -:  152:    // allocate and somehow fill them
+       21:  153:    std::vector<float> input(h*p, 0.f), output(h*p, 0.f), temp(h*p, 0.f);
+        3:  154:    auto begin = std::chrono::high_resolution_clock::now();
+      303:  155:    for (int i = 0; i < reps; i++) {
+      300:  156:        hconv(&input[0], w, h, p, &kernel[0], n, &temp[0]);
+        -:  157:    }
+        3:  158:    auto end = std::chrono::high_resolution_clock::now();
+        6:  159:    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+        9:  160:    std::cout << "hconv time was " << duration/reps << "ns\n";
+        3:  161:    begin = std::chrono::high_resolution_clock::now();
+      303:  162:for (int i = 0; i < reps; i++) {
+      300:  163:        vconv(&temp[0], w, h, p, &kernel[0], n, &output[0]);
+        -:  164:    }
+        3:  165:    end = std::chrono::high_resolution_clock::now();
+        6:  166:    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+        9:  167:    std::cout << "vconv time was " << duration/reps << "ns\n";
+        3:  168:    begin = std::chrono::high_resolution_clock::now();
+        3:  169:for (int i = 0; i < reps; i++) {
+        -:  170:        hrec(&temp[0], w, h, p, &kernel[0], n, &output[0]);
+        -:  171:    }
+        3:  172:    end = std::chrono::high_resolution_clock::now();
+        6:  173:    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+        9:  174:    std::cout << "hrec time was " << duration/reps << "ns\n";
+        3:  175:    begin = std::chrono::high_resolution_clock::now();
+        3:  176:for (int i = 0; i < reps; i++) {
+        -:  177:        vrec(&temp[0], w, h, p, &kernel[0], n, &output[0]);
+        -:  178:    }
+        3:  179:    end = std::chrono::high_resolution_clock::now();
+        6:  180:    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+        9:  181:    std::cout << "vrec time was " << duration/reps << "ns\n";
+        3:  182:    return 0;
+        6:  183:}

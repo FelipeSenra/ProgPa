@@ -1,0 +1,44 @@
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_vector.h'
+Lines executed:100.00% of 20
+Creating 'stl_vector.h.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/allocator.h'
+Lines executed:100.00% of 3
+Creating 'allocator.h.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_uninitialized.h'
+Lines executed:100.00% of 4
+Creating 'stl_uninitialized.h.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_algobase.h'
+Lines executed:100.00% of 4
+Creating 'stl_algobase.h.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/alloc_traits.h'
+Lines executed:100.00% of 2
+Creating 'alloc_traits.h.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/ext/new_allocator.h'
+Lines executed:80.00% of 5
+Creating 'new_allocator.h.gcov'
+
+File 'a1.cpp'
+Lines executed:100.00% of 51
+Creating 'a1.cpp.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/iostream'
+Lines executed:100.00% of 1
+Creating 'iostream.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/chrono'
+Lines executed:100.00% of 3
+Creating 'chrono.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/ostream'
+Lines executed:100.00% of 2
+Creating 'ostream.gcov'
+
+File 'C:/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/5.1.0/include/c++/bits/stl_construct.h'
+Lines executed:100.00% of 2
+Creating 'stl_construct.h.gcov'
+

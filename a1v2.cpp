@@ -1,41 +1,47 @@
 #include <vector>
+#include <functional>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <string>
 #include <chrono>
 #include <iostream>
 #include <complex>
+#include <cassert>
+#include <cstring>
 #include <cmath>
+#include <immintrin.h>
+#include <omp.h>
 
-static void hconv(float *in, int w, int h, int p, float *ker, int n,
-		float *out) {
-	int i, j,k;
-	register double temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
-	temp6 = ker[0];
-	temp7 = ker[1];
-	temp8 = ker[2];
+static void hconv(float *in, int w, int h, int p, float *ker, int n, float *out) {
+	int i,j,k;
+  	double temp[n] = {ker[0],ker[1],ker[2]};
+  	double temp2[3] ;
+  	double temp3[8];
 // interior
-	for (j = 1; j < h - 1; j++) {
-		for (i = 1; i < w - 1; i++) {
-			temp = in[i + w * j];
-//#pragma unroll
-//			for (k = 0; k < n; k++)
-// supos que 0 é o indice -1 do filtro
-				out[i + w * j + -1] += temp * temp6;
-				out[i + w * j] += temp * temp7;
-				out[i + w * j + 1] += temp * temp8;
-		}
-// exterior	
-		for (k = 0; k < n; k++) {
-			temp2 = in[j];
-			temp3 = in[j + w * (h - 1) - k + 1];
-			temp4 = in[w * j - k + 1];
-			temp5 = in[j + w * (h - 1) - k + 1];
-			out[j - 1 + k] += temp2 * ker[k]; 		  // caso 1: sdasd
-			out[j + w * (h - 1)] += temp3 * ker[k]; // caso 2:
-			out[w * j] += temp4 * ker[k]; 		  // caso 1:
-			out[w * j + (h - 1)] += temp5 * ker[k]; // caso 2:
-		}
+	for(j=1;j<h-1;j++){
+		for(i =1 ;i<w-1;i+=8){
+			#pragma unroll
+          for(k = 0;k<8;k++){
+          	temp3[k] = in[i+k+w*j];
+          	out[i+w*j+1+k] += temp3[k]*temp[0];
+          	out[i+w*j+k] += temp3[k]*temp[1];
+         	out[i+w*j-1+k] += temp3[k]*temp[2];
+          }
+
+        	}
+
+// exterior
+//		for(k=0;k<n;k++){
+//		out[j] += in[j-k+1]*ker[k-1]; 		  // caso 1:
+//		out[j+w*(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:
+//		out[w*j] += in[w*j-k+1]*ker[k]; 		  // caso 1:
+//		out[w*j+(h-1)] += in[j+w*(h-1)-k+1]*ker[k]; // caso 2:
+//		}
 	}
 
 }
+
 
 static void vconv(float *in, int w, int h, int p, float *ker, int n,
 		float *out) {
